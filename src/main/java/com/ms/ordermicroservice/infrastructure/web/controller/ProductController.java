@@ -7,6 +7,7 @@ import com.ms.ordermicroservice.domain.model.Product;
 import com.ms.ordermicroservice.domain.serviceports.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Validated ProductRequestDTO productRequestDTO) {
+
         Product product = productMapper.toModel(productRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toResponseDTO(productService.createProduct(product)));
     }

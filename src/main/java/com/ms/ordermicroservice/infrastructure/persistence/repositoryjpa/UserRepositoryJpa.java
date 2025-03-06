@@ -1,6 +1,5 @@
 package com.ms.ordermicroservice.infrastructure.persistence.repositoryjpa;
 
-import com.ms.ordermicroservice.domain.model.User;
 import com.ms.ordermicroservice.infrastructure.persistence.entity.OrderEntity;
 import com.ms.ordermicroservice.infrastructure.persistence.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package com.ms.ordermicroservice.infrastructure.config;
+package com.ms.ordermicroservice.config;
 
 import com.ms.ordermicroservice.application.service.OrderItemServiceImpl;
 import com.ms.ordermicroservice.application.service.OrderServiceImpl;
