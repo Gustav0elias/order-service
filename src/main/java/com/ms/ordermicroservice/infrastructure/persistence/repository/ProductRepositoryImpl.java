@@ -42,6 +42,24 @@ public class ProductRepositoryImpl implements ProductRepository {
         return  productEntities.map(p->modelMapper.map(p, Product.class));
     }
   
- 
+    @Override
+    public Optional<Product> updateProduct(UUID id, Product product) {
+        return productRepositoryJpa.findById(id).map(existingProduct -> {
+            ProductEntity productEntity = modelMapper.map(product, ProductEntity.class);
+            productEntity.setId(id); 
+            ProductEntity updatedProduct = productRepositoryJpa.save(productEntity);
+            return modelMapper.map(updatedProduct, Product.class);
+        });
+    }
+
+    @Override
+    public boolean deleteProduct(UUID id) {
+        if (productRepositoryJpa.existsById(id)) {
+            productRepositoryJpa.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }

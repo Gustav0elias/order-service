@@ -57,4 +57,23 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
 
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar produto", description = "Endpoint para atualizar um produto existente")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID id, @RequestBody @Validated ProductRequestDTO productRequestDTO) {
+        Product product = productMapper.toModel(productRequestDTO);
+        return productService.updateProduct(id, product)
+                .map(p -> ResponseEntity.ok(productMapper.toResponseDTO(p)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Excluir produto", description = "Endpoint para excluir um produto pelo ID")
+    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
+        if (productService.deleteProduct(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

@@ -61,4 +61,6 @@ public class UserController {
         Page<OrderResponseDTO> ordersResponse = orders.map(orderMapper::toResponseDTO);
         return ResponseEntity.ok(new PaginatedResponseDTO<>(ordersResponse));
     }
+
+    
 }

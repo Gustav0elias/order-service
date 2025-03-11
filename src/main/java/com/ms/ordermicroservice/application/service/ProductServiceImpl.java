@@ -31,6 +31,15 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> getAllProducts(Pageable pageable) {
         return productRepository.getAllProducts(pageable);
     }
+    @Override
+    public Optional<Product> updateProduct(UUID id, Product product) {
+        return productRepository.updateProduct(id, product);
+    }
+
+    @Override
+    public boolean deleteProduct(UUID id) {
+        return productRepository.deleteProduct(id);
+    }
 
    
 }

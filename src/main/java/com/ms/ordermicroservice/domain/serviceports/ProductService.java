@@ -13,4 +13,6 @@ public interface ProductService {
     public Product createProduct(Product product);
     public Optional<Product> getProductById(UUID id);
     public Page<Product> getAllProducts(Pageable pageable);
+    public Optional<Product> updateProduct(UUID id, Product product);
+    public boolean deleteProduct(UUID id);
 }
