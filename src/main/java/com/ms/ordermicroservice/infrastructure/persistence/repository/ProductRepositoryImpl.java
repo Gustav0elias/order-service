@@ -54,12 +54,13 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public boolean deleteProduct(UUID id) {
-        if (productRepositoryJpa.existsById(id)) {
+        if (!productRepositoryJpa.existsById(id)) {
+            return false;
+            
+        } 
+
             productRepositoryJpa.deleteById(id);
             return true;
-        } else {
-            return false;
-        }
     }
 
 }
