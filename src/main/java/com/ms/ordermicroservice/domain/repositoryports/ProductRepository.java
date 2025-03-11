@@ -15,4 +15,5 @@ public interface ProductRepository {
     public Page<Product> getAllProducts(Pageable pageable);
     public Optional<Product> updateProduct(UUID id, Product product);
     public boolean deleteProduct(UUID id);
+    public Optional<Product> findProductByName(String name);
 }

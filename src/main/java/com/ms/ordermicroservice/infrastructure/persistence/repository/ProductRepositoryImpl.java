@@ -63,4 +63,11 @@ public class ProductRepositoryImpl implements ProductRepository {
             return true;
     }
 
+    @Override
+    public Optional<Product> findProductByName(String name) {
+
+        return productRepositoryJpa.findProductByName(name).map(p->modelMapper.map(p, Product.class));
+       
+    }
+
 }
