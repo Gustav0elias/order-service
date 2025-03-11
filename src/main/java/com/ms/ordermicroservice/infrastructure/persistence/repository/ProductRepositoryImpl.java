@@ -5,6 +5,8 @@ import com.ms.ordermicroservice.domain.repositoryports.ProductRepository;
 import com.ms.ordermicroservice.infrastructure.persistence.entity.ProductEntity;
 import com.ms.ordermicroservice.infrastructure.persistence.repositoryjpa.ProductRepositoryJpa;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,8 +37,11 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        List <ProductEntity> productEntities = productRepositoryJpa.findAll();
-        return  productEntities.stream().map(p->modelMapper.map(p, Product.class)).collect(Collectors.toList());
+    public Page<Product> getAllProducts(Pageable pageable) {
+        Page <ProductEntity> productEntities = productRepositoryJpa.findAll(pageable);
+        return  productEntities.map(p->modelMapper.map(p, Product.class));
     }
+  
+ 
+
 }

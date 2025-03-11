@@ -3,10 +3,12 @@ package com.ms.ordermicroservice.application.service;
 import com.ms.ordermicroservice.domain.model.Product;
 import com.ms.ordermicroservice.domain.repositoryports.ProductRepository;
 import com.ms.ordermicroservice.domain.serviceports.ProductService;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+ 
 
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
@@ -26,7 +28,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.getAllProducts();
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.getAllProducts(pageable);
     }
+
+   
 }

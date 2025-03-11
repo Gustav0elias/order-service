@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface ProductService {
     public Product createProduct(Product product);
     public Optional<Product> getProductById(UUID id);
-    public List<Product> getAllProducts();
+    public Page<Product> getAllProducts(Pageable pageable);
 }

@@ -1,21 +1,25 @@
 package com.ms.ordermicroservice.infrastructure.web.controller;
 
 import com.ms.ordermicroservice.application.dto.request.ProductRequestDTO;
+import com.ms.ordermicroservice.application.dto.response.PaginatedResponseDTO;
 import com.ms.ordermicroservice.application.dto.response.ProductResponseDTO;
 import com.ms.ordermicroservice.application.mapper.ProductMapper;
 import com.ms.ordermicroservice.domain.model.Product;
 import com.ms.ordermicroservice.domain.serviceports.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("orderms/product")
+@Tag(name="Produtos", description = "API para gerencimaneto de produtos")
 public class ProductController {
 
     private final ProductService productService;
@@ -27,6 +31,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "Criar novo produto", description = "Endoint para a criação de um novo produto")
     public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody @Validated ProductRequestDTO productRequestDTO) {
 
         Product product = productMapper.toModel(productRequestDTO);
@@ -34,13 +39,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        List<ProductResponseDTO>  productsResponse =  products.stream().map(productMapper::toResponseDTO).toList();
-        return ResponseEntity.status(HttpStatus.OK).body(productsResponse);
+    @Operation(summary = "Busca de produtos", description = "Retorna todos os podutos")
+    public ResponseEntity<PaginatedResponseDTO<ProductResponseDTO>> getAllProducts( 
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+                
+        Page<Product> products = productService.getAllProducts(PageRequest.of(page, size));
+        Page<ProductResponseDTO>  productsResponse =  products.map(productMapper::toResponseDTO);
+        return ResponseEntity.ok(new PaginatedResponseDTO<>(productsResponse));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca de produtos pelo ID", description = "Retorna todos os podutos PELO ID")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable UUID id) {
         return productService.getProductById(id).map(p->ResponseEntity
                 .status(HttpStatus.OK).body(productMapper.toResponseDTO(p)))
