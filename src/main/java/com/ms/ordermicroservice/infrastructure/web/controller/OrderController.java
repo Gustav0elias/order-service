@@ -1,6 +1,7 @@
 package com.ms.ordermicroservice.infrastructure.web.controller;
 
 import com.ms.ordermicroservice.application.dto.request.OrderRequestDTO;
+import com.ms.ordermicroservice.application.dto.request.OrderStatusUpdateDTO;
 import com.ms.ordermicroservice.application.dto.response.OrderResponseDTO;
 import com.ms.ordermicroservice.application.mapper.OrderMapper;
 import com.ms.ordermicroservice.domain.model.Order;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,6 +54,13 @@ public class OrderController {
                         .status(HttpStatus.OK).body(orderMapper.toResponseDTO(o)))
                 .orElse(ResponseEntity.notFound().build());
     }
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Atualizar status do pedido", description = "Endpoint para atualizar o status de um pedido existente")
+    public ResponseEntity<OrderResponseDTO> updateStatus (@PathVariable UUID id, @RequestBody @Validated OrderStatusUpdateDTO orderStatusUpdateDTO){
+        return orderService.updateOrderStatus(id, orderStatusUpdateDTO.status())
+        .map(order -> ResponseEntity.ok(orderMapper.toResponseDTO(order)))
+        .orElse(ResponseEntity.notFound().build());
 
+    }
 
 }

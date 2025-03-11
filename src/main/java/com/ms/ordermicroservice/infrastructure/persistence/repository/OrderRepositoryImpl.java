@@ -56,5 +56,14 @@ public class OrderRepositoryImpl implements OrderRepository {
         return orderEntities.stream().map(o->modelMapper.map(o, Order.class)).toList();
     }
 
+    @Override
+    public Optional<Order> updateOrderStatus(UUID id, Order order) {
+     return orderRepositoryJpa.findById(id).map(existingOrder->{
+        OrderEntity updatedOrderEntity = modelMapper.map(order, OrderEntity.class);
+        updatedOrderEntity.setStatus(order.getStatus());
+        return modelMapper.map(orderRepositoryJpa.save(updatedOrderEntity), Order.class);
+     });
+    }
+
 
 }
