@@ -10,4 +10,5 @@ public interface OrderRepository {
     public Order createOrder(Order order);
     public Optional<Order> findOrderById(UUID id);
     public List<Order> findAllOrders();
+    public Optional<Order> updateOrderStatus(UUID id, Order order);
 }
