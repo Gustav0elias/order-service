@@ -1,8 +1,10 @@
 package com.ms.ordermicroservice.infrastructure.web.controller;
 
+import com.ms.ordermicroservice.application.dto.request.OrderItemRequestDTO;
 import com.ms.ordermicroservice.application.dto.request.OrderRequestDTO;
 import com.ms.ordermicroservice.application.dto.request.OrderStatusUpdateDTO;
 import com.ms.ordermicroservice.application.dto.response.OrderResponseDTO;
+import com.ms.ordermicroservice.application.mapper.OrderItemMapper;
 import com.ms.ordermicroservice.application.mapper.OrderMapper;
 import com.ms.ordermicroservice.domain.model.Order;
 import com.ms.ordermicroservice.domain.serviceports.OrderService;
@@ -25,10 +27,12 @@ public class OrderController {
 
     private final OrderService orderService;
     private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
 
-    public OrderController(OrderService orderService, OrderMapper orderMapper) {
+    public OrderController(OrderService orderService, OrderMapper orderMapper, OrderItemMapper orderItemMapper) {
         this.orderService = orderService;
         this.orderMapper = orderMapper;
+        this.orderItemMapper = orderItemMapper;
     }
 
     @PostMapping
@@ -54,13 +58,28 @@ public class OrderController {
                         .status(HttpStatus.OK).body(orderMapper.toResponseDTO(o)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @PatchMapping("/{id}/status")
     @Operation(summary = "Atualizar status do pedido", description = "Endpoint para atualizar o status de um pedido existente")
     public ResponseEntity<OrderResponseDTO> updateStatus (@PathVariable UUID id, @RequestBody @Validated OrderStatusUpdateDTO orderStatusUpdateDTO){
         return orderService.updateOrderStatus(id, orderStatusUpdateDTO.status())
         .map(order -> ResponseEntity.ok(orderMapper.toResponseDTO(order)))
         .orElse(ResponseEntity.notFound().build());
-
     }
+
+    @PostMapping("/{id}/items")
+    @Operation(summary = "Adicionar item ao pedido", description = "Endpoint para adicionar um item ao pedido")
+    public ResponseEntity<OrderResponseDTO> addItem(@PathVariable UUID id, @RequestBody @Validated OrderItemRequestDTO orderItemRequestDTO){
+        Order updateOrder = orderService.addItemToOrder(id, orderItemMapper.toModel(orderItemRequestDTO));
+        return ResponseEntity.ok(orderMapper.toResponseDTO(updateOrder));
+    }
+
+    @DeleteMapping("/{orderId}/items/{itemId}")
+    @Operation(summary = "Remover item do pedido", description = "Endpoint para remover um item de um pedido existente")
+    public ResponseEntity<OrderResponseDTO> removeItemFromOrder( @PathVariable UUID orderId, @PathVariable UUID itemId) {
+        Order updatedOrder = orderService.removeItemFromOrder(orderId, itemId);
+        return ResponseEntity.ok(orderMapper.toResponseDTO(updatedOrder));
+}
+    
 
 }

@@ -2,6 +2,7 @@ package com.ms.ordermicroservice.domain.serviceports;
 
 import com.ms.ordermicroservice.application.enums.StatusOrder;
 import com.ms.ordermicroservice.domain.model.Order;
+import com.ms.ordermicroservice.domain.model.OrderItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,6 @@ public interface OrderService {
     public Optional<Order> findOrderById(UUID id);
     public List<Order> findAllOrders();
     public Optional<Order> updateOrderStatus(UUID id, StatusOrder status);
+    public Order addItemToOrder (UUID orderId, OrderItem orderItem);
+    public Order removeItemFromOrder (UUID orderId, UUID itemId);
 }
