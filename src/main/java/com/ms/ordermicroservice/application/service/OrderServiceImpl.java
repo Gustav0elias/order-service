@@ -52,8 +52,8 @@ public class OrderServiceImpl implements OrderService {
         .orElseThrow(()-> new ResourceNotFoundException("Pedido não encontrado") );
         existingOrder.setStatus(status);
 
-      applicationEventPublisher.publishEvent(new OrderStatusUpdatedEvent(id, status));
-      
+      applicationEventPublisher.publishEvent(new OrderStatusUpdatedEvent(id, status, existingOrder.getUser().getEmail()));
+        
       return orderRepository.updateOrderStatus(id, existingOrder);
     }
 

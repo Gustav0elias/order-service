@@ -19,7 +19,7 @@ public class OrderStatusUpdatedEventListener {
         rabbitTemplate.convertAndSend(
             RabbitMqConfig.ORDER_EXCHANGE,
             RabbitMqConfig.ORDER_ROUTING_KEY,
-            new OrderStatusChangeEventDTO(event.getOrderId(), event.getNewStatus())
+            new OrderStatusChangeEventDTO(event.getOrderId(), event.getNewStatus(), event.getEmail())
         );
 
     }
