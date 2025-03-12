@@ -13,6 +13,8 @@ import com.ms.ordermicroservice.domain.serviceports.OrderService;
 import com.ms.ordermicroservice.domain.serviceports.ProductService;
 import com.ms.ordermicroservice.domain.serviceports.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,8 +36,8 @@ public class BeansConfig {
     }
 
     @Bean
-    public OrderService orderService(OrderRepository orderRepository) {
-        return new OrderServiceImpl(orderRepository);
+    public OrderService orderService(OrderRepository orderRepository, ApplicationEventPublisher applicationEventPublisher) {
+        return new OrderServiceImpl(orderRepository, applicationEventPublisher);
     }
 
     @Bean
