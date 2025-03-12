@@ -8,9 +8,14 @@ import com.ms.ordermicroservice.domain.serviceports.OrderItemService;
 import com.ms.ordermicroservice.infrastructure.persistence.entity.OrderEntity;
 import com.ms.ordermicroservice.infrastructure.persistence.entity.OrderItemEntity;
 import com.ms.ordermicroservice.infrastructure.persistence.repositoryjpa.OrderRepositoryJpa;
+import com.ms.ordermicroservice.infrastructure.web.exception.ResourceNotFoundException;
+
+import jakarta.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,6 +69,38 @@ public class OrderRepositoryImpl implements OrderRepository {
         return modelMapper.map(orderRepositoryJpa.save(updatedOrderEntity), Order.class);
      });
     }
+
+    @Transactional
+    @Override
+    public Order addItemToOrder(UUID orderId, OrderItem orderItem) {
+        OrderEntity existingOrder = orderRepositoryJpa.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ordem não encontrada com o ID: " + orderId));
+    
+        OrderItemEntity orderItemEntity = modelMapper.map(orderItem, OrderItemEntity.class);
+        orderItemEntity.setOrder(existingOrder); 
+    
+        existingOrder.getItems().add(orderItemEntity);
+        existingOrder.setTotalAmount(existingOrder.getTotalAmount()
+                .add(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()))));
+    
+        return modelMapper.map(orderRepositoryJpa.save(existingOrder), Order.class);
+    }
+
+    @Override
+    public Order removeItemFromOrder(UUID orderId, UUID itemId) {
+        OrderEntity existingOrder = orderRepositoryJpa.findById(orderId)
+        .orElseThrow(() -> new ResourceNotFoundException("Ordem não encontrada com o ID: " + orderId));
+        OrderItemEntity itemToRemove = existingOrder.getItems().stream().
+        filter(item -> item.getId().equals(itemId)).findFirst()
+        .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com o ID: " + itemId));
+
+        existingOrder.getItems().remove(itemToRemove);
+        existingOrder.setTotalAmount(existingOrder.getTotalAmount().
+        subtract(itemToRemove.getPrice().multiply(BigDecimal.valueOf(itemToRemove.getQuantity()))));
+        orderRepositoryJpa.save(existingOrder);
+        return modelMapper.map(existingOrder, Order.class);
+    }
+    
 
 
 }
